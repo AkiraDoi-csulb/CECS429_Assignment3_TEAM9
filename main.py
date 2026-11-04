@@ -237,8 +237,8 @@ if __name__ == '__main__':
 
   print('Computing term document matrix...')
   td_matrix = create_term_document_matrix(tuples, document_names, vocab)
-  word_totals = td_matrix.sum(axis=1)
   # some testing for answering the question in the inst
+  #word_totals = td_matrix.sum(axis=1)
   #print(word_totals.sum())                 # total words: 838130
   #print((word_totals > 0).sum())           # different words in the doc: 22602
   #print((word_totals == 1).sum())          # use once: 8268
