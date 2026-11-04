@@ -107,6 +107,8 @@ def create_term_context_matrix(line_tuples, vocab, context_window_size=1):
   vocab_to_id = dict(zip(vocab, range(0, len(vocab))))
 
   # YOUR CODE HERE
+  tc_matrix
+
   return None
 
 def create_PPMI_matrix(term_context_matrix):
@@ -235,8 +237,11 @@ if __name__ == '__main__':
 
   print('Computing term document matrix...')
   td_matrix = create_term_document_matrix(tuples, document_names, vocab)
-  # print(td_matrix.shape)   # (22602, 36), 22602 words and 36 plays (column)
-  # print(td_matrix.sum())   # 838130.0     sum matrix
+  word_totals = td_matrix.sum(axis=1)
+  # some testing for answering the question in the inst
+  #print(word_totals.sum())                 # total words: 838130
+  #print((word_totals > 0).sum())           # different words in the doc: 22602
+  #print((word_totals == 1).sum())          # use once: 8268
 
   print('Computing tf-idf matrix...')
   tf_idf_matrix = create_tf_idf_matrix(td_matrix)
