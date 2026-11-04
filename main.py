@@ -69,7 +69,22 @@ def create_term_document_matrix(line_tuples, document_names, vocab):
   docname_to_id = dict(zip(document_names, range(0, len(document_names))))
 
   # YOUR CODE HERE
-  return None
+  # prepare initial term document matrix (the all zero's matrix to count words)
+  td_matrix = np.zeros((len(vocab), len(document_names)))
+  # read all lines of all plays
+  for play_name, tokens in line_tuples:
+    # skip if it is not in our play list
+    if play_name not in docname_to_id:
+      continue
+    # check this play's belonging column
+    doc_id = docname_to_id[play_name]
+    # count each words in the line
+    for word in tokens:
+      # find the belonging for each row and add 1 if there is the words in that vocab
+      if word in vocab_to_id:
+        word_id = vocab_to_id[word]
+        td_matrix[word_id, doc_id] += 1
+  return td_matrix
 
 def create_term_context_matrix(line_tuples, vocab, context_window_size=1):
   '''Returns a numpy array containing the term context matrix for the input lines.
@@ -220,6 +235,8 @@ if __name__ == '__main__':
 
   print('Computing term document matrix...')
   td_matrix = create_term_document_matrix(tuples, document_names, vocab)
+  # print(td_matrix.shape)   # (22602, 36), 22602 words and 36 plays (column)
+  # print(td_matrix.sum())   # 838130.0     sum matrix
 
   print('Computing tf-idf matrix...')
   tf_idf_matrix = create_tf_idf_matrix(td_matrix)
