@@ -153,7 +153,33 @@ def create_PPMI_matrix(term_context_matrix):
   '''       
   
   # YOUR CODE HERE
-  return None
+  # prepare sums for the formula (float32 for the big data, float64 for the small data)
+  # total = sum of all cells
+  total = term_context_matrix.sum(dtype=np.float64)
+  # row_sums = each word's total 
+  row_sums = term_context_matrix.sum(axis=1, dtype=np.float64)
+  # col_sums = each neighbor's total
+  col_sums = term_context_matrix.sum(axis=0, dtype=np.float64)
+  n = term_context_matrix.shape[0] # num of rows
+  # prepare initial PPMI matrix, use float32 to save memory
+  ppmi = np.zeros_like(term_context_matrix, dtype=np.float32)
+  # calculate 2000 rows at a time
+  chunk = 2000
+  # hide warning for mathmatics errors like log0 and 0/0
+  with np.errstate(divide='ignore', invalid='ignore'):
+    for start in range(0, n, chunk)
+    end = min(n, start + chunk)
+    # copy this chunk as float64
+    counts = term_context_matrix[start:end].astype(np.float64)
+    # make the table
+    expected = row_sums[start:end, None] * col_sums[None, :]
+    # PMI formula: PMI = log2(count * total / (row_sum * col_sum))
+    pmi = np.log2(counts * total / expected)
+    # change negative number and not number into 0
+    pmi[~np.isfinite(pmi)] = 0
+    # keep only positive values (negative saves as 0)
+    ppmi[start:end] = np.maximum(pmi, 0)
+  return ppmi
 
 def create_tf_idf_matrix(term_document_matrix):
   '''Given the term document matrix, output a tf-idf weighted version.
@@ -172,6 +198,8 @@ def create_tf_idf_matrix(term_document_matrix):
   '''
 
   # YOUR CODE HERE
+
+  
   return None
 
 def compute_cosine_similarity(vector1, vector2):
