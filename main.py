@@ -243,9 +243,17 @@ def compute_jaccard_similarity(vector1, vector2):
   Returns:
     A scalar similarity value.
   '''
-  
+
   # YOUR CODE HERE
-  return -1
+  # set the sum of the overlap
+  intersection_sum = np.minimum(vector1, vector2).sum()
+  # set the sum of the union
+  union_sum = np.maximum(vector1, vector2).sum()
+  # return 0.0 if union is zero
+  if union_sum == 0:
+    return 0.0
+  # jaccard = intersection_sum / union_sum
+  return float(intersection_sum / union_sum)
 
 def compute_dice_similarity(vector1, vector2):
   '''Computes the cosine similarity of the two input vectors.
@@ -259,7 +267,10 @@ def compute_dice_similarity(vector1, vector2):
   '''
 
   # YOUR CODE HERE
-  return -1
+  # get jaccard value
+  J = compute_jaccard_similarity(vector1, vector2)
+  # dice similality = S = 2J/(1+J)
+  return float( (2 * J) / (J + 1))
 
 def rank_plays(target_play_index, term_document_matrix, similarity_fn):
   ''' Ranks the similarity of all of the plays to the target play.
