@@ -167,18 +167,18 @@ def create_PPMI_matrix(term_context_matrix):
   chunk = 2000
   # hide warning for mathmatics errors like log0 and 0/0
   with np.errstate(divide='ignore', invalid='ignore'):
-    for start in range(0, n, chunk)
-    end = min(n, start + chunk)
-    # copy this chunk as float64
-    counts = term_context_matrix[start:end].astype(np.float64)
-    # make the table
-    expected = row_sums[start:end, None] * col_sums[None, :]
-    # PMI formula: PMI = log2(count * total / (row_sum * col_sum))
-    pmi = np.log2(counts * total / expected)
-    # change negative number and not number into 0
-    pmi[~np.isfinite(pmi)] = 0
-    # keep only positive values (negative saves as 0)
-    ppmi[start:end] = np.maximum(pmi, 0)
+    for start in range(0, n, chunk):
+      end = min(n, start + chunk)
+      # copy this chunk as float64
+      counts = term_context_matrix[start:end].astype(np.float64)
+      # make the table
+      expected = row_sums[start:end, None] * col_sums[None, :]
+      # PMI formula: PMI = log2(count * total / (row_sum * col_sum))
+      pmi = np.log2(counts * total / expected)
+      # change negative number and not number into 0
+      pmi[~np.isfinite(pmi)] = 0
+      # keep only positive values (negative saves as 0)
+      ppmi[start:end] = np.maximum(pmi, 0)
   return ppmi
 
 def create_tf_idf_matrix(term_document_matrix):
@@ -198,9 +198,18 @@ def create_tf_idf_matrix(term_document_matrix):
   '''
 
   # YOUR CODE HERE
-
-  
-  return None
+  # number of plays (column)
+  num_docs = term_document_matrix.shape[1]
+  # tf = log10(count + 1) (make big counts smaller, 0 stays 0)
+  tf = np.log10(term_document_matrix + 1)
+  # df means how many plays each word appears in
+  df = (term_document_matrix > 0).sum(axis=1)
+  # idf = log10(N / df)
+  # if df is 0, it is set as 0 (avoid dividing by 0)
+  with np.errstate(divide='ignore'):
+    idf = np.where(df > 0, np.log10(num_docs / np.maximum(df, 1)), 0)
+  # multiply each word's row by its idf
+  return tf * idf[:, np.newaxis]
 
 def compute_cosine_similarity(vector1, vector2):
   '''Computes the cosine similarity of the two input vectors.
@@ -214,6 +223,10 @@ def compute_cosine_similarity(vector1, vector2):
   '''
   
   # YOUR CODE HERE
+  # consider dot product (multiply same posi)
+  dot = np.dot(vector1, vector2)
+
+
   return -1
 
 def compute_jaccard_similarity(vector1, vector2):
