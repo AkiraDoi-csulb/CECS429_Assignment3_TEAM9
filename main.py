@@ -221,13 +221,17 @@ def compute_cosine_similarity(vector1, vector2):
   Returns:
     A scalar similarity value.
   '''
-  
   # YOUR CODE HERE
-  # consider dot product (multiply same posi)
+  # consider dot product (multiply same position, then add it)
   dot = np.dot(vector1, vector2)
-
-
-  return -1
+  # multiply the length of two vectors
+  lengths = np.linalg.norm(vector1) * np.linalg.norm(vector2)
+  # return 0.0 if one vector is all zero
+  if lengths == 0:
+    return 0.0
+  # cosine similality = (dot of two vec) / (product of the magnitudes of the vectors)
+  #                   = dot / (length1 * length2)
+  return float(dot / lengths)
 
 def compute_jaccard_similarity(vector1, vector2):
   '''Computes the cosine similarity of the two input vectors.
