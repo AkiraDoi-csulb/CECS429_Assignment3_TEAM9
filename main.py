@@ -69,8 +69,10 @@ def create_term_document_matrix(line_tuples, document_names, vocab):
   docname_to_id = dict(zip(document_names, range(0, len(document_names))))
 
   # YOUR CODE HERE
-  # prepare initial term document matrix (the all zero's matrix to count words)
-  td_matrix = np.zeros((len(vocab), len(document_names)))
+  m = len(vocab)
+  n = len(document_names)
+  # prepare initial term document matrix (the all zero's matrix to count words, rows = terms, columns = document)
+  td_matrix = np.zeros((m, n))
   # read all lines of all plays
   for play_name, tokens in line_tuples:
     # skip if it is not in our play list
@@ -107,9 +109,32 @@ def create_term_context_matrix(line_tuples, vocab, context_window_size=1):
   vocab_to_id = dict(zip(vocab, range(0, len(vocab))))
 
   # YOUR CODE HERE
-  tc_matrix
-
-  return None
+  # prepare initial term context matrix (all zero's matrix, rows = terms, columns = neighbor words)
+  # use float32 to save memory (22602 x 22602 is very big)
+  n = len(vocab)
+  tc_matrix = np.zeros((n,n), dtype=np.float32)
+  # prepare the keep space
+  target_id  = []    # for the words
+  context_id = []    # for the neighbor words
+  # read all line of the plays
+  for _, tokens in line_tuples:
+    # change words into row numbers
+    ids = [vocab_to_id[w] for w in tokens if w in vocab_to_id]
+    # look each words in the line
+    for i, target in enumerate(ids):
+      # set the range of the window to look
+      start = max(0, i - context_window_size)
+      end = min(len(ids), i + context_window_size + 1)
+      # save each neighbor word in the window
+      for j in range(start, end):
+        # skip the word itself
+        if j == i:
+          continue
+        target_id.append(target)
+        context_id.append(ids[j])
+  # add 1 for every pair at once
+  np.add.at(tc_matrix, (np.array(target_id), np.array(context_id)), 1)
+  return tc_matrix
 
 def create_PPMI_matrix(term_context_matrix):
   '''Given a term context matrix, output a PPMI matrix.
@@ -238,7 +263,7 @@ if __name__ == '__main__':
   print('Computing term document matrix...')
   td_matrix = create_term_document_matrix(tuples, document_names, vocab)
   # some testing for answering the question in the inst
-  #word_totals = td_matrix.sum(axis=1)      # look each row's sum (=word total number)
+  #word_totals = td_matrix.sum(axis=1)      # look each row's sum (= word total number)
   #print(word_totals.sum())                 # total words: 838130
   #print((word_totals > 0).sum())           # different words in the doc: 22602
   #print((word_totals == 1).sum())          # use once: 8268
@@ -248,6 +273,8 @@ if __name__ == '__main__':
 
   print('Computing term context matrix...')
   tc_matrix = create_term_context_matrix(tuples, vocab, context_window_size=2)
+  # print(tc_matrix.shape)                    # |V|*|V|: (22602, 22602)
+  # print((tc_matrix == tc_matrix.T).all())   # Symetric check: True
 
   print('Computing PPMI matrix...')
   PPMI_matrix = create_PPMI_matrix(tc_matrix)
