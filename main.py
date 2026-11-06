@@ -291,7 +291,7 @@ def rank_plays(target_play_index, term_document_matrix, similarity_fn):
   
   # YOUR CODE HERE
   # get target plays
-  target = get_column_vector(term_document_matrix, target_play_index)
+  targetPlays = get_column_vector(term_document_matrix, target_play_index)
 
   return []
 
