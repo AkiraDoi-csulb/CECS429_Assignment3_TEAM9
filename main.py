@@ -173,7 +173,7 @@ def create_PPMI_matrix(term_context_matrix):
       counts = term_context_matrix[start:end].astype(np.float64)
       # make the table
       expected = row_sums[start:end, None] * col_sums[None, :]
-      # PMI formula: PMI = log2(count * total / (row_sum * col_sum))
+      # PMI formula is that PMI = log2(count * total / (row_sum * col_sum))
       pmi = np.log2(counts * total / expected)
       # change negative number and not number into 0
       pmi[~np.isfinite(pmi)] = 0
@@ -290,6 +290,9 @@ def rank_plays(target_play_index, term_document_matrix, similarity_fn):
   '''
   
   # YOUR CODE HERE
+  # get target play
+  target = 
+
   return []
 
 def rank_words(target_word_index, matrix, similarity_fn):
