@@ -229,7 +229,7 @@ def compute_cosine_similarity(vector1, vector2):
   # return 0.0 if one vector is all zero
   if lengths == 0:
     return 0.0
-  # cosine similality = (dot of two vec) / (product of the magnitudes of the vectors)
+  # cosine similarity = (dot of two vec) / (product of the magnitudes of the vectors)
   #                   = dot / (length1 * length2)
   return float(dot / lengths)
 
@@ -269,7 +269,7 @@ def compute_dice_similarity(vector1, vector2):
   # YOUR CODE HERE
   # get jaccard value
   J = compute_jaccard_similarity(vector1, vector2)
-  # dice similality = S = 2J/(1+J)
+  # dice similarity = S = 2J/(1+J)
   return float( (2 * J) / (J + 1))
 
 def rank_plays(target_play_index, term_document_matrix, similarity_fn):
@@ -329,7 +329,7 @@ def rank_words(target_word_index, matrix, similarity_fn):
     current_vector = matrix[i, :]
     similarity = similarity_fn(target_vector, current_vector)
     sim_vector[i] = similarity
-
+  # sort high score to low score
   return np.argsort(sim_vector)[::-1].tolist()
 
 
