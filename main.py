@@ -292,8 +292,14 @@ def rank_plays(target_play_index, term_document_matrix, similarity_fn):
   # YOUR CODE HERE
   # get target plays
   targetPlays = get_column_vector(term_document_matrix, target_play_index)
+  sim_vector = np.zeros(term_document_matrix.shape[1])
+  for i in range(term_document_matrix.shape[1]):
+    currentPlays = get_column_vector(term_document_matrix, i)
+    similarity = similarity_fn(targetPlays, currentPlays)
+    sim_vector[i] = similarity
 
-  return []
+
+  return np.argsort(sim_vector)[::-1].tolist()
 
 def rank_words(target_word_index, matrix, similarity_fn):
   ''' Ranks the similarity of all of the words to the target word.
@@ -312,8 +318,16 @@ def rank_words(target_word_index, matrix, similarity_fn):
     target word indexed by word_index
   '''
 
+  target_vector = matrix[target_word_index, :]
+
   # YOUR CODE HERE
-  return []
+  sim_vector = np.zeros(matrix.shape[0])
+  for i in range(matrix.shape[0]):
+    current_vector = matrix[i, :]
+    similarity = similarity_fn(target_vector, current_vector)
+    sim_vector[i] = similarity
+
+  return np.argsort(sim_vector)[::-1].tolist()
 
 
 if __name__ == '__main__':
